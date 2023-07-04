@@ -32,7 +32,6 @@ deployments:
         mkdir ./kratos
         echo "$IDENTITY_SCHEMA" > ./kratos/identity.schema.json
         echo "$CONFIG" > ./kratos/.kratos.yml
-        echo "$CONFIG"
         kratos -c ./kratos/.kratos.yml migrate sql -e --yes
         kratos serve -c ./kratos/.kratos.yml --watch-courier --dev
     environment:
@@ -41,14 +40,10 @@ deployments:
         dsn: ${{ databases.kratos.url }}?max_conns=20&max_idle_conns=4
         serve:
           public:
-            base_url: ${{ ingresses.api.url }}
+            base_url: ${{ ingresses.kratos-public.url }}
             cors:
               enabled: true
-              debug: true
-              allowed_origins:
-                - http://*.127.0.0.1.nip.io
-                - ${{ ingresses.auth.url }}
-                - ${{ ingresses.api.url }}
+              allowed_origins: ${{ variables.allowed_return_urls }}
               allowed_methods:
                 - POST
                 - GET
@@ -66,8 +61,7 @@ deployments:
             base_url: ${{ services.kratos-admin.url }}
         selfservice:
           default_browser_return_url: ${{ ingresses.auth.url }}
-          allowed_return_urls:
-            - ${{ ingresses.auth.url }}
+          allowed_return_urls: ${{ variables.allowed_return_urls }}
           methods:
             password:
               enabled: true
@@ -193,7 +187,7 @@ deployments:
     environment:
       PORT: '4455'
       KRATOS_PUBLIC_URL: ${{ services.kratos-public.url }}
-      KRATOS_BROWSER_URL: ${{ ingresses.api.url }}
+      KRATOS_BROWSER_URL: ${{ ingresses.kratos-public.url }}
     debug:
       volumes:
         src:
@@ -218,7 +212,11 @@ services:
     port: 4455
 
 ingresses:
-  api:
+  kratos-public:
     service: kratos-public
+    headers:
+      Access-Control-Allow-Origin: ${{ variables.allowed_return_urls }}
+      Access-Control-Allow-Methods: '["GET", "OPTIONS", "POST", "PUT", "DELETE"]'
+      Access-Control-Allow-Headers: '*'
   auth:
     service: frontend
