@@ -42,21 +42,7 @@ deployments:
           public:
             base_url: ${{ ingresses.kratos-public.url }}
             cors:
-              enabled: true
-              allowed_origins: ${{ variables.allowed_return_urls }}
-              allowed_methods:
-                - POST
-                - GET
-                - PUT
-                - PATCH
-                - DELETE
-              allowed_headers:
-                - Authorization
-                - Cookie
-                - Content-Type
-              exposed_headers:
-                - Content-Type
-                - Set-Cookie
+              enabled: false
           admin:
             base_url: ${{ services.kratos-admin.url }}
         selfservice:
@@ -95,7 +81,6 @@ deployments:
                 password:
                   hooks:
                     - hook: session
-                    - hook: show_verification_ui
             verification:
               enabled: true
               ui_url: ${{ ingresses.auth.url }}verification
