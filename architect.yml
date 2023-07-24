@@ -8,7 +8,7 @@ variables:
       - ${{ ingresses.auth.url }}
 
 dependencies:
-  smtp: architect/smtp
+  smtp: architectio/mailslurper
 
 databases:
   kratos:
@@ -23,7 +23,7 @@ builds:
 
 deployments:
   kratos:
-    image: oryd/kratos:v0.13.0
+    image: oryd/kratos:v1.0
     entrypoint: [""]
     command:
       - sh
@@ -70,7 +70,7 @@ deployments:
               required_aal: highest_available
             logout:
               after:
-                default_browser_return_url: ${{ ingresses.auth.url }}login
+                default_browser_return_url: ${{ ingresses.auth.url }}
             login:
               ui_url: ${{ ingresses.auth.url }}login
               lifespan: 10m
