@@ -81,6 +81,7 @@ deployments:
                 password:
                   hooks:
                     - hook: session
+                    - hook: show_verification_ui
             verification:
               enabled: true
               ui_url: ${{ ingresses.auth.url }}verification
@@ -170,7 +171,7 @@ deployments:
   ui:
     image: ${{ builds.kratos-ui.id }}
     environment:
-      PORT: '4455'
+      PORT: "4455"
       KRATOS_PUBLIC_URL: ${{ services.kratos-public.url }}
       KRATOS_BROWSER_URL: ${{ ingresses.kratos-public.url }}
     debug:
@@ -201,7 +202,9 @@ ingresses:
     service: kratos-public
     headers:
       Access-Control-Allow-Origin: ${{ variables.allowed_return_urls }}
-      Access-Control-Allow-Methods: '["GET", "OPTIONS", "POST", "PUT", "DELETE"]'
-      Access-Control-Allow-Headers: '*'
+      Access-Control-Allow-Methods:
+        '["GET", "OPTIONS", "POST", "PUT", "DELETE"]'
+      Access-Control-Allow-Headers: "*"
+      Access-Control-Allow-Credentials: "true"
   auth:
     service: frontend
