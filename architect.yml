@@ -8,7 +8,7 @@ variables:
       - ${{ ingresses.auth.url }}
 
 dependencies:
-  smtp: architectio/mailslurper
+  smtp: architectio/smtp4dev
 
 databases:
   kratos:
@@ -146,6 +146,18 @@ deployments:
                     }
                   }
                 },
+                "username": {
+                  "type": "string",
+                  "minLength": 1,
+                  "title": "Username",
+                  "ory.sh/kratos": {
+                    "credentials": {
+                      "password": {
+                        "identifier": true
+                      }
+                    }
+                  }
+                },
                 "name": {
                   "type": "object",
                   "properties": {
@@ -161,7 +173,8 @@ deployments:
                 }
               },
               "required": [
-                "email"
+                "email",
+                "username"
               ],
               "additionalProperties": false
             }
