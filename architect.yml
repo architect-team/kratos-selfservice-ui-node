@@ -8,7 +8,7 @@ variables:
       - ${{ ingresses.auth.url }}
 
 dependencies:
-  smtp: architectio/smtp4dev
+  smtp: tyleraldrich/smtp4dev
 
 databases:
   kratos:
@@ -44,7 +44,7 @@ deployments:
             cors:
               enabled: false
           admin:
-            base_url: ${{ services.kratos-admin.url }}
+            base_url: ${{ ingresses.kratos-admin.url }}
         selfservice:
           default_browser_return_url: ${{ ingresses.auth.url }}
           allowed_return_urls: ${{ variables.allowed_return_urls }}
@@ -63,19 +63,19 @@ deployments:
               enabled: true
           flows:
             error:
-              ui_url: ${{ ingresses.auth.url }}error
+              ui_url: ${{ ingresses.auth.url }}/error
             settings:
-              ui_url: ${{ ingresses.auth.url }}settings
+              ui_url: ${{ ingresses.auth.url }}/settings
               privileged_session_max_age: 15m
               required_aal: highest_available
             logout:
               after:
                 default_browser_return_url: ${{ ingresses.auth.url }}
             login:
-              ui_url: ${{ ingresses.auth.url }}login
+              ui_url: ${{ ingresses.auth.url }}/login
               lifespan: 10m
             registration:
-              ui_url: ${{ ingresses.auth.url }}registration
+              ui_url: ${{ ingresses.auth.url }}/registration
               lifespan: 10m
               after:
                 password:
@@ -84,13 +84,13 @@ deployments:
                     - hook: show_verification_ui
             verification:
               enabled: true
-              ui_url: ${{ ingresses.auth.url }}verification
+              ui_url: ${{ ingresses.auth.url }}/verification
               use: code
               after:
                 default_browser_return_url: ${{ ingresses.auth.url }}
             recovery:
               enabled: true
-              ui_url: ${{ ingresses.auth.url }}recovery
+              ui_url: ${{ ingresses.auth.url }}/recovery
               use: code
         courier:
           smtp:
@@ -116,7 +116,9 @@ deployments:
             - id: default
               url: file://./kratos/identity.schema.json
         cookies:
-          domain: 127.0.0.1.nip.io
+          domain: tyleraldrich.me
+          path: /
+          same_site: Lax
       IDENTITY_SCHEMA: |
         {
           "$id": "https://schemas.ory.sh/presets/kratos/quickstart/email-password/identity.schema.json",
@@ -184,8 +186,9 @@ deployments:
   ui:
     image: ${{ builds.kratos-ui.id }}
     environment:
-      PORT: "4455"
-      KRATOS_PUBLIC_URL: ${{ services.kratos-public.url }}
+      # Cloud run doesn't let you define PORT yourself, it's supplied
+      # PORT: "4455"
+      KRATOS_PUBLIC_URL: ${{ ingresses.kratos-public.url }}
       KRATOS_BROWSER_URL: ${{ ingresses.kratos-public.url }}
     debug:
       volumes:
@@ -208,9 +211,11 @@ services:
     port: 4434
   frontend:
     deployment: ui
-    port: 4455
+    port: 3000
 
 ingresses:
+  kratos-admin:
+    service: kratos-admin
   kratos-public:
     service: kratos-public
     headers:
