@@ -116,7 +116,7 @@ deployments:
             - id: default
               url: file://./kratos/identity.schema.json
         cookies:
-          domain: tyleraldrich.me
+          domain: ${{ ingresses.kratos-public.rootHost }}
           path: /
           same_site: Lax
       IDENTITY_SCHEMA: |
