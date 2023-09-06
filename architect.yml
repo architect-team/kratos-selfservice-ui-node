@@ -116,7 +116,7 @@ deployments:
             - id: default
               url: file://./kratos/identity.schema.json
         cookies:
-          domain: ${{ ingresses.kratos-public.rootHost }}
+          domain: ${{ ingresses.kratos-public.dnsZone }}
           path: /
           same_site: Lax
       IDENTITY_SCHEMA: |
