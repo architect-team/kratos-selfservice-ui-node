@@ -116,7 +116,9 @@ deployments:
             - id: default
               url: file://./kratos/identity.schema.json
         cookies:
-          domain: 127.0.0.1.nip.io
+          domain: ${{ ingresses.kratos-public.dns_zone }}
+          path: /
+          same_site: Lax
       IDENTITY_SCHEMA: |
         {
           "$id": "https://schemas.ory.sh/presets/kratos/quickstart/email-password/identity.schema.json",
