@@ -63,19 +63,19 @@ deployments:
               enabled: true
           flows:
             error:
-              ui_url: ${{ ingresses.auth.url }}error
+              ui_url: ${{ ingresses.auth.url }}/error
             settings:
-              ui_url: ${{ ingresses.auth.url }}settings
+              ui_url: ${{ ingresses.auth.url }}/settings
               privileged_session_max_age: 15m
               required_aal: highest_available
             logout:
               after:
                 default_browser_return_url: ${{ ingresses.auth.url }}
             login:
-              ui_url: ${{ ingresses.auth.url }}login
+              ui_url: ${{ ingresses.auth.url }}/login
               lifespan: 10m
             registration:
-              ui_url: ${{ ingresses.auth.url }}registration
+              ui_url: ${{ ingresses.auth.url }}/registration
               lifespan: 10m
               after:
                 password:
@@ -84,13 +84,13 @@ deployments:
                     - hook: show_verification_ui
             verification:
               enabled: true
-              ui_url: ${{ ingresses.auth.url }}verification
+              ui_url: ${{ ingresses.auth.url }}/verification
               use: code
               after:
                 default_browser_return_url: ${{ ingresses.auth.url }}
             recovery:
               enabled: true
-              ui_url: ${{ ingresses.auth.url }}recovery
+              ui_url: ${{ ingresses.auth.url }}/recovery
               use: code
         courier:
           smtp:
@@ -184,7 +184,7 @@ deployments:
         }
 
   ui:
-    image: ${{ builds.kratos-ui.id }}
+    image: ${{ builds.kratos-ui.image }}
     environment:
       PORT: "4455"
       KRATOS_PUBLIC_URL: ${{ services.kratos-public.url }}
